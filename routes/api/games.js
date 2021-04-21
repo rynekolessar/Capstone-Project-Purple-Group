@@ -16,7 +16,7 @@ router.get('/test', (req, res) => res.send('game route testing!'));
 // @access Public
 router.get('/', (req, res) => {
   Game.find()
-    .then(games => res.json(books))
+    .then(games => res.json(games))
     .catch(err => res.status(404).json({ nogamesfound: 'No Games found' }));
 });
 
@@ -43,7 +43,7 @@ router.post('/', (req, res) => {
 // @description Update game
 // @access Public
 router.put('/:id', (req, res) => {
-  Book.findByIdAndUpdate(req.params.id, req.body)
+  Game.findByIdAndUpdate(req.params.id, req.body)
     .then(game => res.json({ msg: 'Updated successfully' }))
     .catch(err =>
       res.status(400).json({ error: 'Unable to update the Database' })
