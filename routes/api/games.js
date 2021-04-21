@@ -55,7 +55,7 @@ router.put('/:id', (req, res) => {
 // @access Public
 router.delete('/:id', (req, res) => {
   Game.findByIdAndRemove(req.params.id, req.body)
-    .then(book => res.json({ mgs: 'Game entry deleted successfully' }))
+    .then(game => res.json({ mgs: 'Game entry deleted successfully' }))
     .catch(err => res.status(404).json({ error: 'No such Game' }));
 });
 
