@@ -23,9 +23,27 @@ const GameSchema = new mongoose.Schema({
 	game_studio: {
 		type: String
 	},
+	reviews: {
+		type: [ReviewSchema],
+		default: {}
+	},
 	updated_date: {
 		type: Date,
 		default: Date.now
+	}
+});
+
+const ReviewSchema = new mongoose.Schema({
+	rating: {
+		type: Number,
+		required: true,
+		min: 0,
+		max: 5
+	},
+	review: {
+		type: String,
+		required: true,
+		maxlength: 300
 	}
 });
 
