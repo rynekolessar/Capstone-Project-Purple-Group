@@ -7,11 +7,11 @@ const GameSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	platform: { // PlayStation, XBox, PC, etc..
+	platform: {
 		type: String,
 		required: true
 	},
-	genre: { // FPS, RPG, Horror, etc...
+	genre: {
 		type: String
 	},
 	release_date: {
@@ -23,28 +23,9 @@ const GameSchema = new mongoose.Schema({
 	game_studio: {
 		type: String
 	},
-	reviews: {
-		type: [ReviewSchema],
-		default: {}
-	},
 	updated_date: {
 		type: Date,
 		default: Date.now
 	}
 });
-
-const ReviewSchema = new mongoose.Schema({
-	rating: {
-		type: Number,
-		required: true,
-		min: 0,
-		max: 5
-	},
-	review: {
-		type: String,
-		required: true,
-		maxlength: 300
-	}
-});
-
 module.exports = Game = mongoose.model('game', GameSchema);
