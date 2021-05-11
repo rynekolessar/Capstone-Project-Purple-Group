@@ -17,6 +17,11 @@ const reviewSchema = new mongoose.Schema({
         ref: 'Game',
         required: true
     },
+    author: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: true
+    },
     updated_date: {
 		type: Date,
 		default: Date.now
