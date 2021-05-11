@@ -28,4 +28,11 @@ const GameSchema = new mongoose.Schema({
 		default: Date.now
 	}
 });
+
+GameSchema.virtual('reviews', {
+	ref: 'Review',
+	foreignField: 'game',
+	localField: '_id'
+});
+
 module.exports = Game = mongoose.model('game', GameSchema);
