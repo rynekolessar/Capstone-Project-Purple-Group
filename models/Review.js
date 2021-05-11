@@ -27,4 +27,14 @@ const reviewSchema = new mongoose.Schema({
 		default: Date.now
 	}
 });
+
+reviewSchema.index({ 
+    game: 1, 
+    author: 1 
+}, 
+{ 
+    unique: true 
+});
+
+
 module.exports = Review = mongoose.model('review', reviewSchema);
