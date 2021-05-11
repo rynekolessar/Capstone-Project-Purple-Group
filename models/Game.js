@@ -23,6 +23,11 @@ const GameSchema = new mongoose.Schema({
 	game_studio: {
 		type: String
 	},
+	average_rating: {
+		type: Number,
+		min: 1,
+        max: 5
+	},
 	updated_date: {
 		type: Date,
 		default: Date.now
@@ -33,6 +38,10 @@ GameSchema.virtual('reviews', {
 	ref: 'Review',
 	foreignField: 'game',
 	localField: '_id'
+});
+
+GameSchema.index({
+	average_rating: 1
 });
 
 module.exports = Game = mongoose.model('game', GameSchema);
