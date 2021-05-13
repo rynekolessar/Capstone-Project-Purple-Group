@@ -4,6 +4,7 @@ const authController = require('../../controllers/authController');
 
 const router = express.Router({ mergeParams: true });
 
+/*
 router
     .route('/')
     .get(reviewController.getAllReviews)
@@ -13,3 +14,4 @@ router
         reviewController.setGameUserIds,
         reviewController.createReview
     );
+*/
