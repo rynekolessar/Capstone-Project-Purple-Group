@@ -4,4 +4,5 @@ module.exports.setGameUserIds = (req, res, next) => {
   next();
 };
 
+// TODO: review controller methods
 // module.exports.createReview = (req, res)

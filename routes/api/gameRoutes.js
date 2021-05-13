@@ -5,7 +5,7 @@ const router = express.Router();
 // Load Game model
 const Game = require('../../models/Game');
 
-//
+// TODO: review game router route to review router
 //router.use('/:id/reviews', reviewRouter);
 
 // @route GET api/games/test
