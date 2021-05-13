@@ -1,10 +1,11 @@
-// routes/api/games.js
-
 const express = require('express');
+const reviewRouter = require('./reviewRoutes');
 const router = express.Router();
 
 // Load Game model
 const Game = require('../../models/Game');
+
+router.use('/:id/reviews', reviewRouter);
 
 // @route GET api/games/test
 // @description tests games route
@@ -15,7 +16,7 @@ router.get('/test', (req, res) => res.send('game route testing!'));
 // @description Get all games
 // @access Public
 router.get('/', (req, res) => {
-  Game.find()
+  Game.find().populate('reviews')
     .then(games => res.json(games))
     .catch(err => res.status(404).json({ nogamesfound: 'No Games found' }));
 });
@@ -24,7 +25,7 @@ router.get('/', (req, res) => {
 // @description Get single game by id
 // @access Public
 router.get('/:id', (req, res) => {
-  Game.findById(req.params.id)
+  Game.findById(req.params.id).populate('reviews')
     .then(game => res.json(game))
     .catch(err => res.status(404).json({ nogamefound: 'No Game found' }));
 });

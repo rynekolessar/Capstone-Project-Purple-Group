@@ -1,5 +1,3 @@
-// controllers/user.js
-
 const User = require('../models/User');
 const errorHandler = require('../helpers/dbErrorHandler');
 

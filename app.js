@@ -5,9 +5,9 @@ const connectDB = require('./config/db');
 var cors = require('cors');
 
 // routes
-const games = require('./routes/api/games');
-const userRoutes = require('./routes/api/users');
-const authRoutes = require('./routes/api/auth');
+const gameRoutes = require('./routes/api/gameRoutes');
+const userRoutes = require('./routes/api/userRoutes');
+const authRoutes = require('./routes/api/authRoutes');
 const app = express();
 
 // Connect to Database
@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => res.send('testing.. testing.. 1 2 '));
 
 // use routes
-app.use('/api/games', games);
+app.use('/api/games', gameRoutes);
 app.use('/', userRoutes);
 app.use('/', authRoutes);
 

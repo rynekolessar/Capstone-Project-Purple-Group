@@ -1,8 +1,6 @@
-// routes/api/users.js
-
 const express = require('express');
-const user = require('../../controllers/user');
-const auth = require('../../controllers/auth');
+const user = require('../../controllers/userController');
+const auth = require('../../controllers/authController');
 const router = express.Router();
 
 router.route('/api/users').post(user.registerUser);
