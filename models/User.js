@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema ({
+const userSchema = new Schema({
     name: {
         type: String,
         trim: true,
@@ -25,43 +25,43 @@ const userSchema = new Schema ({
 });
 
 userSchema
-	.virtual('password')
-	.set(function(password) {
-		this._password = password;
-		this.salt = this.makeSalt();
-		this.hashedPassword = this.encryptedPassword(password);
-	})
-	.get(function() {
-		return this._password;
-	});
+    .virtual('password')
+    .set(function (password) {
+        this._password = password;
+        this.salt = this.makeSalt();
+        this.hashedPassword = this.encryptedPassword(password);
+    })
+    .get(function () {
+        return this._password;
+    });
 
-    userSchema.methods = {
-        authenticate: function(plainText) {
-            return this.encryptedPassword(plainText) === this.hashedPassword;
-        },
-        encryptedPassword: function(password) {
-            if (!password) return '';
-            try {
-                return crypto
-                    .createHmac('sha1', this.salt)
-                    .update(password)
-                    .digest('hex');
-            } catch (err) {
-                return '';
-            }
-        },
-        makeSalt: function() {
-            return Math.round(new Date().valueOf() * Math.random()) + '';
+userSchema.methods = {
+    authenticate: function (plainText) {
+        return this.encryptedPassword(plainText) === this.hashedPassword;
+    },
+    encryptedPassword: function (password) {
+        if (!password) return '';
+        try {
+            return crypto
+                .createHmac('sha1', this.salt)
+                .update(password)
+                .digest('hex');
+        } catch (err) {
+            return '';
         }
-    };
-    
-    userSchema.path('hashedPassword').validate(function(v) {
-        if (this.hashedPassword && this._password.length < 6) {
-            this.invalidate('password', 'Password must be at least 6 characters long.');
-        }
-        if (this.isNew && !this._password) {
-            this.invalidate('password', 'Password is required.');
-        }
-    }, null);
-    
+    },
+    makeSalt: function () {
+        return Math.round(new Date().valueOf() * Math.random()) + '';
+    }
+};
+
+userSchema.path('hashedPassword').validate(function (v) {
+    if (this.hashedPassword && this._password.length < 6) {
+        this.invalidate('password', 'Password must be at least 6 characters long.');
+    }
+    if (this.isNew && !this._password) {
+        this.invalidate('password', 'Password is required.');
+    }
+}, null);
+
 module.exports = User = mongoose.model('user', userSchema);

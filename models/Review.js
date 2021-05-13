@@ -34,17 +34,17 @@ const reviewSchema = new mongoose.Schema(
 
 // User can only make one review for any game
 reviewSchema.index(
-    { 
-        game: 1, 
-        author: 1 
-    }, 
-    { 
-        unique: true 
+    {
+        game: 1,
+        author: 1
+    },
+    {
+        unique: true
     }
 );
 
 // Query middleware
-reviewSchema.pre(/^find/, function(next) {
+reviewSchema.pre(/^find/, function (next) {
     this.populate({
         path: 'author'
     });

@@ -24,7 +24,7 @@ const GameSchema = new mongoose.Schema({
 	average_rating: {
 		type: Number,
 		min: 1,
-        max: 5
+		max: 5
 	},
 	updated_date: {
 		type: Date,

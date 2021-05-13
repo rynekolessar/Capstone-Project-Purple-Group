@@ -29,7 +29,7 @@ module.exports.findUserById = function findUserById(req, res, next, id) {
 
 module.exports.findUserProfile = function findUserProfile(req, res) {
   req.profile.hashedPassword = undefined;
-  req.profile.salt = undefined;``
+  req.profile.salt = undefined; ``
   return res.json(req.profile);
 };
 
