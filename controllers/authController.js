@@ -4,7 +4,7 @@ const expressJwt = require('express-jwt');
 const { jwtSecret } = require('../config/index');
 const catchAsync = require('../utilities/catchAsync');
 const AppError = require('../utilities/appError');
-const Email = require('../utilities/email');
+// const Email = require('../utilities/email');
 const crypto = require('crypto');
 const { promisify } = require('util');
 
@@ -51,7 +51,7 @@ module.exports.signup = catchAsync(async (req, res, next) => {
   });
 
   const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome();
+  // await new Email(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, req, res);
 });
@@ -180,12 +180,12 @@ module.exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
+  // const resetURL = `${req.protocol}://${req.get(
+  //   'host'
+  // )}/api/v1/users/resetPassword/${resetToken}`;
 
   try {
-    await new Email(user, resetURL).sendPasswordReset();
+    // await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
@@ -204,7 +204,7 @@ module.exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 module.exports.resetPassword = catchAsync(async (req, res, next) => {
-  // 1) Get user based on the token
+  // Get user based on the token
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.params.token)
@@ -215,7 +215,7 @@ module.exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetExpires: { $gt: Date.now() }
   });
 
-  // 2) Set the new password, so long as there is a user and the token has not expired
+  // Set the new password, so long as there is a user and the token has not expired
   if (!user) {
     return next(new AppError('Token is invalid or has expired.', 400));
   }
@@ -225,28 +225,28 @@ module.exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  // 3) Update the changedPasswordAt property for the user -- Done in user model!
+  // Update the changedPasswordAt property for the user. Done in user model
 
-  // 4) Log the user in, send JWT
+  // Log the user in, send JWT
   createSendToken(user, 200, req, res);
 });
 
 module.exports.updatePassword = catchAsync(async (req, res, next) => {
-  // 1) Get user from collection
+  // Get user from collection
   const user = await User.findById(req.user.id).select('+password');
 
-  // 2) Check if posted password is correct
+  // Check if posted password is correct
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(
       new AppError('Inputted password does not match current password.', 401)
     );
   }
 
-  // 3) If so, update password
+  // If so, update password
   user.password = req.body.newPassword;
   user.confirmPassword = req.body.confirmNewPassword;
   await user.save();
 
-  // 4) Log user in, send JWT
+  // Log user in, send JWT
   createSendToken(user, 200, req, res);
 });
