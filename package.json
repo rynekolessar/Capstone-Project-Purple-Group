@@ -29,7 +29,9 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.7",
     "nodeman": "^1.1.2",
-    "validation": "0.0.1"
+    "slugify": "^1.5.3",
+    "validation": "0.0.1",
+    "validator": "^13.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",

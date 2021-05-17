@@ -1,67 +1,115 @@
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
+
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    trim: true,
-    required: [true, 'Username is required']
+    required: true
   },
   email: {
     type: String,
-    trime: true,
-    unique: 'Email already exists',
-    match: [/.+\@.+\..+/, 'Please enter a valid email address'],
-    required: [true, 'Email is required']
+    required: [true, 'Email is required'],
+    unique: true,
+    lowercase: true,
+    validate: [validator.isEmail, 'Please provide a valid email']
   },
-  hashedPassword: {
+  role: {
     type: String,
-    required: [true, 'Password is required']
+    enum: {
+      values: ['user', 'admin'],
+      message: 'Role must be either user or admin.'
+    },
+    default: 'user'
   },
-  salt: {
-    type: String
+  password: {
+    type: String,
+    required: true,
+    minlength: 8,
+    select: false
+  },
+  confirmPassword: {
+    type: String,
+    required: true,
+    validate: {
+      // This only works on SAVE
+      validator: function(val) {
+        return val === this.password;
+      },
+      message: 'Passwords must be the same'
+    }
+  },
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
   }
 });
 
-userSchema
-  .virtual('password')
-  .set(function (password) {
-    this._password = password;
-    this.salt = this.makeSalt();
-    this.hashedPassword = this.encryptedPassword(password);
-  })
-  .get(function () {
-    return this._password;
-  });
+// Middleware
 
-userSchema.methods = {
-  authenticate: function (plainText) {
-    return this.encryptedPassword(plainText) === this.hashedPassword;
-  },
-  encryptedPassword: function (password) {
-    if (!password) return '';
-    try {
-      return crypto
-        .createHmac('sha1', this.salt)
-        .update(password)
-        .digest('hex');
-    } catch (err) {
-      return '';
-    }
-  },
-  makeSalt: function () {
-    return Math.round(new Date().valueOf() * Math.random()) + '';
-  }
+userSchema.pre('save', async function(next) {
+  // Only run this function if password was actually modified
+  if (!this.isModified('password')) return next();
+
+  // Hash the password with cost of 12
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // Delete password confirm field
+  this.confirmPassword = undefined;
+  next();
+});
+
+userSchema.pre('save', function(next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+userSchema.pre(/^find/, function(next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
+
+userSchema.methods.correctPassword = async function(
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-userSchema.path('hashedPassword').validate(function (v) {
-  if (this.hashedPassword && this._password.length < 6) {
-    this.invalidate('password', 'Password must be at least 6 characters long.');
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    ); 
+    // console.log(changedTimestamp, JWTTimestamp);
+    return JWTTimestamp < changedTimestamp;
   }
-  if (this.isNew && !this._password) {
-    this.invalidate('password', 'Password is required.');
-  }
-}, null);
+  return false;
+};
+
+userSchema.methods.createPasswordResetToken = function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // console.log({ resetToken }, this.passwordResetToken);
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+};
 
 module.exports = User = mongoose.model('user', userSchema);
