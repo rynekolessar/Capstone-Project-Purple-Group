@@ -7,7 +7,6 @@ var cors = require('cors');
 // routes
 const gameRoutes = require('./routes/api/gameRoutes');
 const userRoutes = require('./routes/api/userRoutes');
-const authRoutes = require('./routes/api/authRoutes');
 const app = express();
 
 // Connect to Database
@@ -23,9 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => res.send('testing.. testing.. 1 2 '));
 
 // use routes
-app.use('/api/games', gameRoutes);
+app.use('/', gameRoutes);
 app.use('/', userRoutes);
-app.use('/', authRoutes);
 
 
 const port = process.env.PORT || 8082;
