@@ -16,7 +16,7 @@ const reviewSchema = new mongoose.Schema(
       ref: 'Game',
       required: true
     },
-    author: {
+    user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: true
@@ -36,7 +36,7 @@ const reviewSchema = new mongoose.Schema(
 reviewSchema.index(
   {
     game: 1,
-    author: 1
+    user: 1
   },
   {
     unique: true
@@ -46,9 +46,54 @@ reviewSchema.index(
 // Query middleware
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'author'
+    path: 'user'
   });
   next();
 });
+
+// calculates the average rating
+reviewSchema.statics.calcAverageRatings = async function(gameId) {
+  const stats = await this.aggregate([
+    {
+      $match: { game: gameId }
+    },
+    {
+      $group: {
+        _id: '$game',
+        nRatings: { $sum: 1 },
+        avgRating: { $avg: '$rating' }
+      }
+    }
+  ]);
+
+  if (stats.length > 0) {
+    await Game.findByIdAndUpdate(gameId, {
+      ratingsQuantity: stats[0].nRatings,
+      ratingsAverage: stats[0].avgRating
+    });
+  } else {
+    await Game.findByIdAndUpdate(gameId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5
+    });
+  }
+};
+
+reviewSchema.post('save', function() {
+  // this points to current review
+
+  this.constructor.calcAverageRatings(this.game);
+});
+
+reviewSchema.pre(/^findOneAnd/, async function(next) {
+  this.r = await this.findOne();
+  next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function(next) {
+  await this.r.constructor.calcAverageRatings(this.r.game);
+});
+
+
 
 module.exports = Review = mongoose.model('review', reviewSchema);
