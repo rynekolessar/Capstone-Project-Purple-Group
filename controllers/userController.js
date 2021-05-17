@@ -1,48 +1,66 @@
 const User = require('../models/User');
-const errorHandler = require('../helpers/dbErrorHandler');
+const catchAsync = require('../utilities/catchAsync');
+const AppError = require('./../utilities/appError');
+const factory = require('./handlerFactory');
+ 
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
 
-module.exports.registerUser = function registerUser(req, res, next) {
-  const user = new User(req.body);
-  user.save((err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler.getErrorMessage(err)
-      });
+  Object.keys(obj).forEach(el => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+
+  return newObj;
+};
+
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+  // Error if user POSTS password data
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(new AppError('This route is not for password updates!'), 400);
+  }
+
+  // Filter out unwanted field names
+  const filteredBody = filterObj(req.body, 'name', 'email');
+  if (req.file) filteredBody.photo = req.file.filename;
+
+  // Update user document
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: updatedUser
     }
-    res.status(200).json({
-      message: 'New user registered successfully!'
-    });
+  });
+});
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(204).json({
+    status: 'success',
+    data: null
+  });
+});
+
+exports.createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not defined! Please use /signup instead.'
   });
 };
 
-module.exports.findUserById = function findUserById(req, res, next, id) {
-  User.findById(id).exec((err, user) => {
-    if (err || !user) {
-      return res.status(400).json({
-        error: 'No user found with that credentials!'
-      });
-    }
-    req.profile = user;
-    next();
-  });
-};
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
 
-module.exports.findUserProfile = function findUserProfile(req, res) {
-  req.profile.hashedPassword = undefined;
-  req.profile.salt = undefined; ``
-  return res.json(req.profile);
-};
-
-module.exports.deleteUser = function deleteUser(req, res, next) {
-  let user = req.profile;
-  user.remove((err, deletedUser) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler.getErrorMessage(err)
-      });
-    }
-    deletedUser.hashedPassword = undefined;
-    user.salt = undefined;
-    res.json(user);
-  });
-};
+// Do NOT update passwords with this
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
