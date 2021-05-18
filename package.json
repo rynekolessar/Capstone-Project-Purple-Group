@@ -28,7 +28,9 @@
     "express-jwt": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.7",
+    "multer": "^1.4.2",
     "nodeman": "^1.1.2",
+    "sharp": "^0.28.2",
     "slugify": "^1.5.3",
     "validation": "0.0.1",
     "validator": "^13.6.0"
