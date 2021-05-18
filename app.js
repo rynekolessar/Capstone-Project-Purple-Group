@@ -5,9 +5,9 @@ const connectDB = require('./config/db');
 var cors = require('cors');
 
 // routes
-const games = require('./routes/api/games');
-const userRoutes = require('./routes/api/users');
-const authRoutes = require('./routes/api/auth');
+const gameRoutes = require('./routes/api/gameRoutes');
+const userRoutes = require('./routes/api/userRoutes');
+const reviewRoutes = require('./routes/api/reviewRoutes');
 const app = express();
 
 // Connect to Database
@@ -20,13 +20,14 @@ app.use(cors({ origin: true, credentials: true}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => res.send('testing.. testing.. 1 2 '));
+// Testing
+app.get('/', (req, res) => res.send('GET request'));
+app.post('/', (req, res) => res.send('POST request'));
 
 // use routes
-app.use('/api/games', games);
-app.use('/', userRoutes);
-app.use('/', authRoutes);
-
+app.use('/game/', gameRoutes);
+app.use('/users/', userRoutes);
+app.use('/reviews/', reviewRoutes);
 
 const port = process.env.PORT || 8082;
 
