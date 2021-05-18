@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const GameSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
   },
+  slug: String,
   platform: {
     type: String,
     required: true
@@ -12,20 +15,30 @@ const GameSchema = new mongoose.Schema({
   genre: {
     type: String
   },
-  release_date: {
+  releaseDate: {
     type: Date
   },
   description: {
     type: String
   },
-  game_studio: {
+  gameStudio: {
     type: String
   },
-  average_rating: {
+  averageRating: {
     type: Number,
     min: 1,
-    max: 5
+    max: 5,
+    set: val => Math.round(val * 10) / 10
   },
+  quantityRatings: {
+    type: Number,
+    default: 0
+  },
+  imageCover: {
+    type: String,
+    required: [true, 'A tour must have a cover image']
+  },
+  images: [String],
   updated_date: {
     type: Date,
     default: Date.now
@@ -33,7 +46,7 @@ const GameSchema = new mongoose.Schema({
 });
 
 GameSchema.virtual('reviews', {
-  ref: 'Review',
+  ref: 'reviews',
   foreignField: 'game',
   localField: '_id'
 });
@@ -42,4 +55,10 @@ GameSchema.index({
   average_rating: 1
 });
 
-module.exports = Game = mongoose.model('game', GameSchema);
+GameSchema.pre('save', function(next) {
+  this.slug = slugify(this.title, { lower: true });
+  next();
+});
+
+
+module.exports = Game = mongoose.model('games', GameSchema);
