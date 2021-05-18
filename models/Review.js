@@ -46,7 +46,7 @@ reviewSchema.index(
 // Query middleware
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'user'
+    path: 'users'
   });
   next();
 });
@@ -68,13 +68,13 @@ reviewSchema.statics.calcAverageRatings = async function(gameId) {
 
   if (stats.length > 0) {
     await Game.findByIdAndUpdate(gameId, {
-      ratingsQuantity: stats[0].nRatings,
-      ratingsAverage: stats[0].avgRating
+      quantityRatings: stats[0].nRatings,
+      averageRating: stats[0].avgRating
     });
   } else {
     await Game.findByIdAndUpdate(gameId, {
-      ratingsQuantity: 0,
-      ratingsAverage: 4.5
+      quantityRatings: 0,
+      averageRating: 4.5
     });
   }
 };
@@ -94,6 +94,4 @@ reviewSchema.post(/^findOneAnd/, async function(next) {
   await this.r.constructor.calcAverageRatings(this.r.game);
 });
 
-
-
-module.exports = Review = mongoose.model('review', reviewSchema);
+module.exports = Review = mongoose.model('reviews', reviewSchema);
