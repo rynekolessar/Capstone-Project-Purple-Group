@@ -10,10 +10,13 @@ module.exports.deleteOne = Model =>
       return next(new AppError('No document found with that ID', 404));
     }
 
-    res.status(204).json({
-      status: 'success',
-      data: null
-    });
+    // res.status(204).json({
+    //   status: 'success',
+    //   data: null
+    // });
+
+    res.json(null);
+
   });
 
 module.exports.updateOne = Model =>
@@ -27,22 +30,28 @@ module.exports.updateOne = Model =>
       return next(new AppError('No document found with that ID', 404));
     }
 
-    res.status(200).json({
-      status: 'success',
-      data: {
-        data: doc
-      }
-    });
+    // res.status(200).json({
+    //   status: 'success',
+    //    data: {
+    //     data: doc
+    //    }
+    // });
+
+    res.json(doc);
+
   });
 
   module.exports.createOne = Model =>
   catchAsync(async (req, res, next) => {
     const newDoc = await Model.create(req.body);
 
-    res.status(201).json({
-      status: 'success',
-      data: { data: newDoc }
-    });
+    // res.status(201).json({
+    //   status: 'success',
+    //   data: { data: newDoc }
+    // });
+
+    res.json(newDoc);
+
   });
 
   module.exports.getOne = (Model, popOptions) =>
@@ -55,12 +64,15 @@ module.exports.updateOne = Model =>
       return next(new AppError('No document found with that ID', 404));
     }
 
-    res.status(200).json({
-      status: 'success',
-      data: {
-        data: doc
-      }
-    });
+    // res.status(200).json({
+    //   status: 'success',
+    //   data: {
+    //     data: doc
+    //   }
+    // });
+
+    res.json(doc);
+
   });
 
   module.exports.getAll = Model =>
@@ -77,11 +89,14 @@ module.exports.updateOne = Model =>
     const docs = await features.query;
 
     // SEND QUERY
-    res.status(200).json({
-      status: 'success',
-      results: docs.length,
-      data: {
-        data: docs
-      }
-    });
+    // res.json({
+    //   status: 'success',
+    //   results: docs.length,
+    //   data: {
+    //     docs
+    //   }
+    // });
+
+    res.json(docs);
+
   });
