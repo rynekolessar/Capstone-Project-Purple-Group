@@ -35,8 +35,7 @@ const GameSchema = new mongoose.Schema({
     default: 0
   },
   imageCover: {
-    type: String,
-    required: [true, 'A tour must have a cover image']
+    type: String
   },
   images: [String],
   updated_date: {

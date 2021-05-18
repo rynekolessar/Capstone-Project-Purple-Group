@@ -1,9 +1,9 @@
 const Review = require('../models/Review');
 const factory = require('./handlerFactory');
 
-module.exports.setTourUserIds = (req, res, next) => {
-  if (!req.body.tour) req.body.tour = req.params.tourId;
-  if (!req.body.user) req.body.user = req.user.id;
+module.exports.setGameUserIds = (req, res, next) => {
+  if (!req.body.game) req.body.game = req.params.gameId;
+  if (!req.body.game) req.body.game = req.user.id;
   next();
 };
 

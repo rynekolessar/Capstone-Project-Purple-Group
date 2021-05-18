@@ -26,8 +26,8 @@ app.post('/', (req, res) => res.send('POST request'));
 
 // use routes
 app.use('/game/', gameRoutes);
-app.use('/user', userRoutes);
-app.use('/', reviewRoutes);
+app.use('/users/', userRoutes);
+app.use('/reviews/', reviewRoutes);
 
 const port = process.env.PORT || 8082;
 

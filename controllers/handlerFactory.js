@@ -65,9 +65,8 @@ module.exports.updateOne = Model =>
 
   module.exports.getAll = Model =>
   catchAsync(async (req, res, next) => {
-    // Allow for nest GET reviews on tour (hack)
     let filter = {};
-    if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.params.gameId) filter = { game: req.params.gameId };
 
     // EXECUTE QUERY
     const features = new APIFeatures(Model.find(filter), req.query)
