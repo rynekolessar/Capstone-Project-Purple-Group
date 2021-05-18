@@ -25,7 +25,7 @@ app.get('/', (req, res) => res.send('GET request'));
 app.post('/', (req, res) => res.send('POST request'));
 
 // use routes
-app.use('/game/', gameRoutes);
+app.use('/games/', gameRoutes);
 app.use('/users/', userRoutes);
 app.use('/reviews/', reviewRoutes);
 
