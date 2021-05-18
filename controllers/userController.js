@@ -34,21 +34,25 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     runValidators: true
   });
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user: updatedUser
-    }
-  });
+  // res.status(200).json({
+  //   status: 'success',
+  //   data: {
+  //     user: updatedUser
+  //   }
+  // });
+
+  res.json(updatedUser);
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
-  res.status(204).json({
-    status: 'success',
-    data: null
-  });
+  // res.status(204).json({
+  //   status: 'success',
+  //   data: null
+  // });
+
+  res.json(null);
 });
 
 exports.createUser = (req, res) => {

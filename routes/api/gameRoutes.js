@@ -11,8 +11,8 @@ router
   .route('/')
   .get(gameController.getAllGames)
   .post(
-    authController.protect,
-    authController.restrictTo('admin', 'user'),
+    // authController.protect,
+    // authController.restrictTo('admin', 'user'),
     gameController.createGame
   );
 
@@ -20,14 +20,14 @@ router
   .route('/:id')
   .get(gameController.getGame)
   .patch(
-    authController.protect,
-    authController.restrictTo('admin', 'user'),
+    // authController.protect,
+    // authController.restrictTo('admin', 'user'),
     gameController.uploadGameImages,
     gameController.updateGame
   )
   .delete(
-    authController.protect,
-    authController.restrictTo('admin', 'user'),
+    // authController.protect,
+    // authController.restrictTo('admin', 'user'),
     gameController.deleteGame
   );
 
