@@ -2,6 +2,7 @@
 
 const express = require('express');
 const connectDB = require('./config/db');
+const cookieParser = require('cookie-parser');
 var cors = require('cors');
 
 // routes
@@ -19,6 +20,7 @@ app.use(cors({ origin: true, credentials: true}));
 // Init Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Testing
 app.get('/', (req, res) => res.send('GET request'));
