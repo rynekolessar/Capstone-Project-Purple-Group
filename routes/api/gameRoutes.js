@@ -13,6 +13,7 @@ router
   .post(
     // authController.protect,
     // authController.restrictTo('admin', 'user'),
+    // gameController.uploadGameImages,
     gameController.createGame
   );
 

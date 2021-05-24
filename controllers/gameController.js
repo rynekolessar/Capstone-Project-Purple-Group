@@ -20,10 +20,10 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
-module.exports.uploadGameImages = upload.fields([
-  { name: 'imageCover', maxCount: 1 },
-  { name: 'images', maxCount: 3 }
-]);
+module.exports.uploadGameImages = upload.fields(
+  { name: 'imageCover', maxCount: 1 }
+  // { name: 'images', maxCount: 3 }
+);
 
 
 // Middleware

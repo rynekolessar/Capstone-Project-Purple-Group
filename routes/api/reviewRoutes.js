@@ -5,13 +5,13 @@ const authController = require('../../controllers/authController');
 const router = express.Router({ mergeParams: true });
 
 // Protect all routes (below this point)
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
   .route('/')
   .get(reviewController.getAllReviews)
   .post(
-    authController.restrictTo('user'),
+    // authController.restrictTo('user'),
     reviewController.setGameUserIds,
     reviewController.createReview
   );
