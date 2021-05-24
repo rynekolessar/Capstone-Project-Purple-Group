@@ -50,6 +50,13 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+userSchema.virtual('reviews', {
+  ref: 'reviews',
+  foreignField: 'user',
+  localField: '_id'
+});
+
+
 // Middleware
 
 userSchema.pre('save', async function(next) {

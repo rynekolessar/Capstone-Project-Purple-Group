@@ -79,6 +79,7 @@ module.exports.updateOne = Model =>
   catchAsync(async (req, res, next) => {
     let filter = {};
     if (req.params.gameId) filter = { game: req.params.gameId };
+    if (req.params.userId) filter = { user: req.params.userId };
 
     // EXECUTE QUERY
     const features = new APIFeatures(Model.find(filter), req.query)
